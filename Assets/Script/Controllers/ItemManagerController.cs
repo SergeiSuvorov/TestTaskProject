@@ -28,7 +28,7 @@ namespace Controller
             return itemsDatas;
         }
 
-        public void CreateRandomItemInCoordinate(Vector3 position)
+        public GameObject CreateRandomItemInCoordinate(Vector3 position)
         {
             var index = Random.Range(0, _datas.Count);
             var item = _datas[index].ItemRecords;
@@ -36,6 +36,7 @@ namespace Controller
             go.GetComponent<ItemView>().SetItem(item, 1);
             go.transform.SetParent(_parentGameTrasform);
             go.transform.position = position;
+            return go;
         }
 
     }

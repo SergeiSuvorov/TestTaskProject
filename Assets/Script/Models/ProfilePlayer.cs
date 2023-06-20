@@ -1,7 +1,5 @@
-﻿using Data;
-using Interface;
+﻿using Interface;
 using System.Collections.Generic;
-using Tools;
 using UniRx;
 
 namespace Model
@@ -21,20 +19,5 @@ namespace Model
         {
             CurrentState = new ReactiveProperty<GameState>();
         }     
-
-        public void SaveData(SaveDataRepository saveDataRepository)
-        {
-            var saveData = new SavedData();
-            saveData.SetItems(InventoryItems);
-            saveData.SetWeapon(PlayerEquippedWeapon);
-            saveDataRepository.Save(saveData);
-        }
-
-        public void LoadData(SaveDataRepository saveDataRepository)
-        {
-            var loadData = saveDataRepository.Load();
-            InventoryItems = loadData?.GetItems();
-            PlayerEquippedWeapon = loadData?.GetWeapon();
-        }
     }
 }

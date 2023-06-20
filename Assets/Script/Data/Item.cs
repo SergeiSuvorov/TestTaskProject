@@ -44,19 +44,6 @@ namespace Data
             Amount = amount;
         }
 
-        public Item(ItemDataForSafe itemDataForSafe)
-        {
-            Id = itemDataForSafe.Id;
-            Title = itemDataForSafe.Title;
-            Description = itemDataForSafe.Description;
-            MaxItemsInInventorySlot = itemDataForSafe.MaxItemsInInventorySlot;
-            SpriteIcon = itemDataForSafe.SpriteIcon;
-            CanEquipped = itemDataForSafe.CanEquipped;
-            ItemType = itemDataForSafe.ItemType;
-            IsEquipped = itemDataForSafe.IsEquipped;
-            Amount = itemDataForSafe.Amount;
-        }
-
         public IInventoryItem Clone()
         {
             var cloneItem = new Item(Id,Title,Description,MaxItemsInInventorySlot,SpriteIcon,CanEquipped,ItemType,IsEquipped,Amount);

@@ -17,12 +17,12 @@ namespace Controller
         private readonly IGameMenuInputController _gameMenuInputController;
         private readonly IGameEndScreenController _gameEndScreenController;
 
-        public GameController(Transform placeForUi, ProfilePlayer profilePlayer)
+        public GameController(Transform placeForUi, Transform parentGameTransform, ProfilePlayer profilePlayer, ItemManagerController itemManager)
         {
             _gameDisposables = new CompositeDisposable();
             _profilePlayer = profilePlayer;
 
-            _parentGameTransform = CreateParentGameObject();
+            _parentGameTransform = parentGameTransform;
 
             var mapView = LoadView<MapView>(_parentGameTransform, ResourcePathConstants.MapResourcePath);
             var xSize = mapView.MapSize.x / (mapView.CellSize.x * 2);
@@ -41,13 +41,12 @@ namespace Controller
             _gameEndScreenController.BackToMainMenu.Subscribe(_ => { BackToMainMenu(); }).AddTo(_gameDisposables);
             AddController(gameEndScreenController);
 
-            var itemManager = new ItemManagerController(_parentGameTransform);
-            AddController(itemManager);
 
             if (_profilePlayer.PlayerEquippedWeapon == null)
                 _profilePlayer.PlayerEquippedWeapon = new WeaponItem(itemManager.GetItem(GameConstants.StartWeaponId) as WeaponDataRecord,true,1);
             var playerController = new PlayerContoller(_profilePlayer, _parentGameTransform, placeForUi, inputController, xSize, ySize);
-            playerController.OnDeathAction.Subscribe(value=> { OnGameEnd(false); }).AddTo(_gameDisposables);
+            playerController.OnDeathAction
+                .Subscribe(value=> { OnGameEnd(false); }).AddTo(_gameDisposables);
             AddController(playerController);
 
             var cameraController = new CameraController(playerController.PlayerGameObject, _gameDisposables, xSize, ySize);
@@ -58,9 +57,12 @@ namespace Controller
             AddController(healthBarManagerController);
 
             var enemyManagerController = new EnemyManagerController(_parentGameTransform, xSize, ySize, GameConstants.StartEnemyCount, viewServices);
-            enemyManagerController.onEnemyCreate.Subscribe(value => { healthBarManagerController.SetHealthBarToObject(value); }).AddTo(_gameDisposables);
-            enemyManagerController.onEnemyDied.Subscribe(value => { itemManager.CreateRandomItemInCoordinate(value); }).AddTo(_gameDisposables);
-            enemyManagerController.onLastEnemyDied.Subscribe(value => { OnGameEnd(true); }).AddTo(_gameDisposables);
+            enemyManagerController.onEnemyCreate
+                .Subscribe(value => { healthBarManagerController.SetHealthBarToObject(value); }).AddTo(_gameDisposables);
+            enemyManagerController.onEnemyDied
+                .Subscribe(value => { AddGameObjects(itemManager.CreateRandomItemInCoordinate(value));}).AddTo(_gameDisposables);
+            enemyManagerController.onLastEnemyDied.
+                Subscribe(value => { OnGameEnd(true); }).AddTo(_gameDisposables);
             enemyManagerController.CreateEnemys();
             AddController(enemyManagerController);
         }
@@ -69,13 +71,7 @@ namespace Controller
             _gameDisposables.Clear();
             base.OnDispose();
         }
-        private Transform CreateParentGameObject()
-        {
-            var objectView = new GameObject("GameRoot");
-            AddGameObjects(objectView);
 
-            return objectView.transform;
-        }
         private void OnGameEnd(bool isWin)
         {
             _gameEndScreenController.OpenResultScreen(isWin);

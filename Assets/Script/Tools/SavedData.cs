@@ -1,6 +1,4 @@
-﻿using Data;
-using Interface;
-using Model;
+﻿using Interface;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,46 +10,33 @@ namespace Tools
     {
         public string Name;
 
-        [SerializeField] public List<ItemDataForSafe> _itemDatasForSave;
-        [SerializeField] public WeaponDataForSave PlayerEquippedWeapon;
+        [SerializeField] public List<int> ItemDataIds;
+        [SerializeField] public int PlayerEquippedWeaponId;
 
-      
-        public void SetWeapon(IWeaponItem playerEquippedWeapon)
+        public int GetWeaponID()
         {
-            if(playerEquippedWeapon!=null)
-            PlayerEquippedWeapon = new WeaponDataForSave(playerEquippedWeapon);
+            return PlayerEquippedWeaponId;
         }
 
-        public IWeaponItem GetWeapon()
+        public List<int> GetItemsId()
         {
-            return new WeaponItem(PlayerEquippedWeapon,true,1);
-        }
-        public List<IInventoryItem> GetItems()
-        {
-
-            var inventoryItems = new List<IInventoryItem>();
-
-            for (int i = 0; i < _itemDatasForSave.Count; i++)
-            {
-                if(_itemDatasForSave[i].Id!=0)
-                inventoryItems.Add(new Item(_itemDatasForSave[i]));
-            }
-
-            return inventoryItems;
+            return ItemDataIds;
         }
 
-        public void SetItems(List<IInventoryItem> inventoryItems)
+        public void SetItems(List<IInventoryItem> inventoryItems, IWeaponItem weaponItem)
         {
-            _itemDatasForSave = new List<ItemDataForSafe>();
+            ItemDataIds = new List<int>();
             if (inventoryItems != null)
                 for (int i = 0; i < inventoryItems.Count; i++)
                 {
                     if (inventoryItems[i].Id != 0)
                     {
-                        var data = new ItemDataForSafe(inventoryItems[i]);
-                        _itemDatasForSave.Add(data);
+                        ItemDataIds.Add(inventoryItems[i].Id);
                     }
                 }
+
+            if(weaponItem!=null)
+                PlayerEquippedWeaponId = weaponItem.Id;
         }
     }
 }
