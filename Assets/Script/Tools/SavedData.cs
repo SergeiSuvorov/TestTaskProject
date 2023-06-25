@@ -10,7 +10,7 @@ namespace Tools
     {
         public string Name;
 
-        [SerializeField] public List<int> ItemDataIds;
+        [SerializeField] public List<SavedItemData> ItemDataIds;
         [SerializeField] public int PlayerEquippedWeaponId;
 
         public int GetWeaponID()
@@ -18,20 +18,19 @@ namespace Tools
             return PlayerEquippedWeaponId;
         }
 
-        public List<int> GetItemsId()
-        {
-            return ItemDataIds;
-        }
-
         public void SetItems(List<IInventoryItem> inventoryItems, IWeaponItem weaponItem)
         {
-            ItemDataIds = new List<int>();
+            ItemDataIds = new List<SavedItemData>();
             if (inventoryItems != null)
                 for (int i = 0; i < inventoryItems.Count; i++)
                 {
                     if (inventoryItems[i].Id != 0)
                     {
-                        ItemDataIds.Add(inventoryItems[i].Id);
+                        var savedItemData = new SavedItemData();
+                        savedItemData.ItemId = inventoryItems[i].Id;
+                        savedItemData.ItemAmount = inventoryItems[i].Amount;
+
+                        ItemDataIds.Add(savedItemData);
                     }
                 }
 

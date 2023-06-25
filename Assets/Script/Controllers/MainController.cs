@@ -75,7 +75,9 @@ namespace Controller
             if (idsList?.Count>0)
                 for(int i=0; i< idsList.Count;i++)
                 {
-                    var item = new Item(_itemManagerController.GetItem(idsList[i]));
+                    var itemId = _itemManagerController.GetItem(idsList[i].ItemId);
+                    var amount = idsList[i].ItemAmount;
+                    var item = new Item(itemId, amount);
                     inventoryItems.Add(item);
                 }
             _profilePlayer.InventoryItems = inventoryItems;

@@ -1,0 +1,1 @@
+{"Name":"Test","ItemDataIds":[{"ItemId":1,"ItemAmount":2},{"ItemId":2,"ItemAmount":1}],"PlayerEquippedWeaponId":2}
